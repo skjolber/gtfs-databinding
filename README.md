@@ -32,7 +32,7 @@ Example dependency config:
 
 ```xml
 <dependency>
-    <groupId>com.github.skjolber</groupId>
+    <groupId>com.github.skjolber.gtfs-databinding</groupId>
     <artifactId>gtfs-databinding</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 </dependency>
