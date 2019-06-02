@@ -34,7 +34,7 @@ Example dependency config:
 <dependency>
     <groupId>com.github.skjolber.gtfs-databinding</groupId>
     <artifactId>gtfs-databinding</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -65,7 +65,7 @@ Feel free to connect with me on [LinkedIn], see also my [Github page].
 
 [Apache 2.0]: 							https://www.apache.org/licenses/LICENSE-2.0.html
 [issue-tracker]:						https://github.com/skjolber/gtfs-databinding/issues
-[Maven]:									https://maven.apache.org/
+[Maven]:								https://maven.apache.org/
 [LinkedIn]:								https://lnkd.in/r7PWDz
 [Github page]:							https://skjolber.github.io
-[OneBusAway GTFS Reference]:		https://github.com/OneBusAway/onebusaway-gtfs-modules
+[OneBusAway GTFS Reference]:			https://github.com/OneBusAway/onebusaway-gtfs-modules
