@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.skjolber.gtfs-databinding</groupId>
     <artifactId>gtfs-databinding</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>gtfs-databinding</name>
     <description>Library for parsing of GTFS feeds</description>
     <url>https://github.com/skjolber/gtfs-databinding</url>
