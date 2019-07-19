@@ -34,7 +34,7 @@ Example dependency config:
 <dependency>
     <groupId>com.github.skjolber.gtfs-databinding</groupId>
     <artifactId>gtfs-databinding</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
