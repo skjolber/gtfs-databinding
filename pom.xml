@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.skjolber.gtfs-databinding</groupId>
     <artifactId>gtfs-databinding</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
     <name>gtfs-databinding</name>
     <description>Library for parsing of GTFS feeds</description>
     <url>https://github.com/skjolber/gtfs-databinding</url>
@@ -57,7 +57,7 @@
         <connection>scm:git:git@github.com:skjolber/gtfs-databinding.git</connection>
         <developerConnection>scm:git:git@github.com:skjolber/gtfs-databinding.git</developerConnection>
          <url>git@github.com:skjolber/gtfs-databinding.git</url>
-        <tag>gtfs-databinding-1.0.1</tag>
+        <tag>gtfs-databinding-1.0.0</tag>
     </scm>
 
     <issueManagement>
