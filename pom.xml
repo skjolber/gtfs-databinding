@@ -42,7 +42,7 @@
         <unzip-csv.version>1.0.7</unzip-csv.version>
         <univocity-parsers.version>2.8.1</univocity-parsers.version>
         <slf4j.version>1.7.26</slf4j.version>
-        <sesseltjonna-csv>1.0.16</sesseltjonna-csv>
+        <sesseltjonna-csv>1.0.17</sesseltjonna-csv>
     </properties>
     
     <licenses>

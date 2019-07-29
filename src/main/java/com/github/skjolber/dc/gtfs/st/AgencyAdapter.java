@@ -27,7 +27,7 @@ public class AgencyAdapter implements CsvLineHandlerFactory, CsvLineHandler<Agen
 
 	static {
 		// agency_id,agency_name,agency_url,agency_timezone,agency_phone
-		parser = CsvMapper2.builder(Agency.class)
+		parser = CsvMapper.builder(Agency.class)
 			.stringField("agency_id")
 				.setter(Agency::setId)
 				.optional()
