@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/skjolber/gtfs-databinding.svg)](https://travis-ci.org/skjolber/gtfs-databinding)
+[![codecov](https://codecov.io/gh/skjolber/gtfs-databinding/branch/master/graph/badge.svg)](https://codecov.io/gh/skjolber/gtfs-databinding)
 
 # gtfs-databinding
 
