@@ -22,7 +22,11 @@ Supported GTFS files are
  * calendar.txt	
  * transfers.txt
 
-The project also servers as a complex use-case for the [sesseltjonna-csv](https://github.com/skjolber/sesseltjonna-csv) in combination with [unzip-csv](https://github.com/skjolber/unzip-csv) projects.
+The project also servers as a complex use-case for the [sesseltjonna-csv](https://github.com/skjolber/sesseltjonna-csv) in combination with [unzip-csv](https://github.com/skjolber/unzip-csv) projects. Notable features:
+
+ * Large files are unzipped and split into multiple pieces for multithreaded processing, and
+ * intermediate processors are used to store referential relationships (without use of synchronization), then
+ * post-processing hooks are used to manage state and resolve referential relationships
 
 Bugs, feature suggestions and help requests can be filed with the [issue-tracker].
  
@@ -35,7 +39,7 @@ Example dependency config:
 <dependency>
     <groupId>com.github.skjolber.gtfs-databinding</groupId>
     <artifactId>gtfs-databinding</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -62,6 +66,7 @@ Feel free to connect with me on [LinkedIn], see also my [Github page].
 [Apache 2.0]
 
 # History
+ - 1.0.2: Bump unzip / CSV library versions
  - 1.0.0: Initial version
 
 [Apache 2.0]: 							https://www.apache.org/licenses/LICENSE-2.0.html
