@@ -3,8 +3,8 @@ package com.github.skjolber.dc.gtfs.mt;
 import java.io.Reader;
 
 import com.github.skjolber.stcsv.CsvReader;
-import com.github.skjolber.stcsv.StaticCsvMapper;
-import com.github.skjolber.stcsv.StaticCsvMapper2;
+import com.github.skjolber.stcsv.databinder.StaticCsvMapper;
+import com.github.skjolber.stcsv.databinder.StaticCsvMapper2;
 
 public abstract class StaticCsvMapperAdapter<T, D> implements StaticCsvMapper<T> {
 

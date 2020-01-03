@@ -8,7 +8,7 @@ import com.github.skjolber.dc.gtfs.GtfsIntermediateProcessor;
 import com.github.skjolber.dc.gtfs.IntermediateProcessor;
 import com.github.skjolber.dc.gtfs.mt.StopTimeAdapter;
 import com.github.skjolber.dc.model.StopTime;
-import com.github.skjolber.stcsv.CsvMapper2;
+import com.github.skjolber.stcsv.databinder.CsvMapper2;
 import com.github.skjolber.stcsv.CsvReader;
 
 public class StopTimeAdapterTest {

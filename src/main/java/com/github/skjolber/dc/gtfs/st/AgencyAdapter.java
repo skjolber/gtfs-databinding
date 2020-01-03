@@ -6,9 +6,8 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import com.github.skjolber.dc.model.Agency;
-import com.github.skjolber.stcsv.CsvMapper;
-import com.github.skjolber.stcsv.CsvMapper2;
 import com.github.skjolber.stcsv.CsvReader;
+import com.github.skjolber.stcsv.databinder.CsvMapper;
 import com.github.skjolber.unzip.FileEntryChunkStreamHandler;
 import com.github.skjolber.unzip.FileEntryHandler;
 import com.github.skjolber.unzip.FileEntryStreamHandler;
