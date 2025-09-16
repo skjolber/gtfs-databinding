@@ -2,27 +2,28 @@ package com.github.skjolber.dc.model;
 
 public class Transfer {
 
-	private Stop from;
-	private Stop to;
+	private Stop fromStop;
+	private Stop toStop;
 	
 	private int type;
-	
-	private int minTime = -1;
 
-	public Stop getFrom() {
-		return from;
+	private Trip fromTrip;
+	private Trip toTrip;
+
+	public Stop getFromStop() {
+		return fromStop;
 	}
 
-	public void setFrom(Stop from) {
-		this.from = from;
+	public void setFromStop(Stop fromStop) {
+		this.fromStop = fromStop;
 	}
 
-	public Stop getTo() {
-		return to;
+	public Stop getToStop() {
+		return toStop;
 	}
 
-	public void setTo(Stop to) {
-		this.to = to;
+	public void setToStop(Stop toStop) {
+		this.toStop = toStop;
 	}
 
 	public int getType() {
@@ -33,13 +34,19 @@ public class Transfer {
 		this.type = type;
 	}
 
-	public int getMinTime() {
-		return minTime;
+	public Trip getFromTrip() {
+		return fromTrip;
 	}
 
-	public void setMinTime(int minTime) {
-		this.minTime = minTime;
+	public void setFromTrip(Trip fromTrip) {
+		this.fromTrip = fromTrip;
 	}
-	
-	
+
+	public Trip getToTrip() {
+		return toTrip;
+	}
+
+	public void setToTrip(Trip toTrip) {
+		this.toTrip = toTrip;
+	}
 }

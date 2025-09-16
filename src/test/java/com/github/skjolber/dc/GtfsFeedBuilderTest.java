@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 public class GtfsFeedBuilderTest {
 
-	private static File file = new File("./src/test/resources/rb_rut-aggregated-gtfs.zip");
+	private static File file = new File("./src/test/resources/rb_norway-aggregated-gtfs.zip");
 
 	@Test
 	public void testBuilder() throws Exception {
@@ -21,7 +21,6 @@ public class GtfsFeedBuilderTest {
 	@Test
 	public void testBuilderWithFilter() throws Exception {
 		LocalDate date = LocalDate.of(2019, 3, 28);
-
 		long time = System.currentTimeMillis();
 		GtfsFeedBuilder.newInstance().withStartDate(date).withEndDate(date).withFile(file).build();
 		System.out.println("Done in " + (System.currentTimeMillis() - time));

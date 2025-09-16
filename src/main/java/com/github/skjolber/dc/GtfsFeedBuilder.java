@@ -117,10 +117,12 @@ public class GtfsFeedBuilder {
 		files.add("calendar.txt");
 		files.add("calendar_dates.txt");
 		files.add("transfers.txt");
-		
+
 		if(endDate == null && startDate == null) {
 			files.add("stop_times.txt");
 		}
+
+		files.add("shapes.txt");
 
 		boolean success = false;
 		if(engine.handle(source, Arrays.asList("feed_info.txt"))) {

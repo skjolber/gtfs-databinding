@@ -85,9 +85,6 @@ public class FilterStopTimeAdapter implements CsvLineHandlerFactory {
 				.setter(StopTime::setStopHeadsign)
 				.quotedWithoutLinebreaks()
 				.optional()
-			.stringField("fare_period_id")
-				.setter(StopTime::setFarePeriodId)
-				.optional()
 			.build();
 	}
 	

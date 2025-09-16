@@ -1,3 +1,5 @@
+src/test/resources/rb_norway-aggregated-gtfs.zip
+
 #standard-kataloger for deriverte data
 target/
 activemq-data/

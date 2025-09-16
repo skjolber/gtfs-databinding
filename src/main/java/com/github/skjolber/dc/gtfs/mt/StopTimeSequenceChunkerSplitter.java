@@ -40,18 +40,30 @@ public class StopTimeSequenceChunkerSplitter extends NewlineChunkSplitter {
 	
 	public int getNextChunkIndex(byte[] bytes, int fromIndex) {
 		fromIndex = super.getNextChunkIndex(bytes, fromIndex);
-		
+
+		int sequenceNumber = Integer.MAX_VALUE;
+
 		fromIndex--;
 		do {
-			fromIndex = super.getNextChunkIndex(bytes, fromIndex);
+			int nextIndex = super.getNextChunkIndex(bytes, fromIndex);
+			if(nextIndex == -1) {
+				return -1;
+			}
 			// find sequence number
-			int sequenceNumber = parseSequenceNumber(bytes, fromIndex + 1);
-			if(sequenceNumber == 0) {
+			int nextSequenceNumber = parseSequenceNumber(bytes, nextIndex + 1);
+			if(nextSequenceNumber == 0) {
+				fromIndex = nextIndex;
 				break;
 			}
-			fromIndex--; // skip newline
+			if(nextSequenceNumber > sequenceNumber) {
+				fromIndex++;
+				break;
+			}
+			sequenceNumber = nextSequenceNumber;
+
+			fromIndex = nextIndex - 1; // skip newline
 		} while(true);
-		
+
 		return fromIndex;
 	}
 
@@ -87,8 +99,9 @@ public class StopTimeSequenceChunkerSplitter extends NewlineChunkSplitter {
 				}
 				return Integer.parseInt(new String(bytes, start, fromIndex - start));
 			}
-		} while(true);
-		
+		} while(fromIndex > 0);
+
+		return 0;
 	}
 
 }

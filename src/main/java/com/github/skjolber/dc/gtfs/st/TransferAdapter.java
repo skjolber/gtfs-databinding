@@ -10,6 +10,7 @@ import com.github.skjolber.dc.GtfsFeed;
 import com.github.skjolber.dc.gtfs.GtfsIntermediateProcessor;
 import com.github.skjolber.dc.model.Stop;
 import com.github.skjolber.dc.model.Transfer;
+import com.github.skjolber.dc.model.Trip;
 import com.github.skjolber.stcsv.CsvReader;
 import com.github.skjolber.stcsv.databinder.CsvMapper2;
 import com.github.skjolber.unzip.FileEntryChunkStreamHandler;
@@ -38,22 +39,28 @@ public class TransferAdapter extends GtfsIntermediateProcessor<Transfer> impleme
 			.stringField("to_stop_id")
 				.consumer( (t, i, id) -> i.add(1, id, t))
 				.required()
+			.stringField("from_trip_id")
+				.consumer( (t, i, id) -> i.add(2, id, t))
+				.required()
+			.stringField("to_trip_id")
+				.consumer( (t, i, id) -> i.add(3, id, t))
+				.required()
 			.integerField("transfer_type")
 				.setter(Transfer::setType)
-				.required()
-			.integerField("min_transfer_time")
-				.setter(Transfer::setMinTime)
 				.optional()
 			.build();
 	}
-	
+
+	// from_stop_id  ,from_trip_id                                              ,to_stop_id    ,to_trip_id                                                ,transfer_type
+	// NSR:Quay:38012,AKT:ServiceJourney:3004_1_171_321_40_108960_111540_3950041,NSR:Quay:38013,AKT:ServiceJourney:2128_1_22_2301_21_114000_115020_3950580,1
+
 	protected List<Transfer> transfers = new ArrayList<>();
 
 	public TransferAdapter(GtfsFeed gtfsFeed) {
-		super(2, gtfsFeed);
+		super(4, gtfsFeed);
 	}
 	
-	public List<Transfer> getServiceCalendars() {
+	public List<Transfer> getTransfers() {
 		return transfers;
 	}
 
@@ -90,13 +97,13 @@ public class TransferAdapter extends GtfsIntermediateProcessor<Transfer> impleme
 		return null;
 	}
 
-	public List<Transfer> resolveStops() {
+	public List<Transfer> resolveTranfers() {
 		// resolve dates, creating them if necessary
 		for (Entry<String, List<Transfer>> entry : getById(0).entrySet()) {
 			Stop stop = feed.getStop(entry.getKey());
 			
 			for(Transfer transfer : entry.getValue()) {
-				transfer.setFrom(stop);
+				transfer.setFromStop(stop);
 			}
 		}
 
@@ -104,7 +111,23 @@ public class TransferAdapter extends GtfsIntermediateProcessor<Transfer> impleme
 			Stop stop = feed.getStop(entry.getKey());
 			
 			for(Transfer transfer : entry.getValue()) {
-				transfer.setTo(stop);
+				transfer.setToStop(stop);
+			}
+		}
+
+		for (Entry<String, List<Transfer>> entry : getById(2).entrySet()) {
+			Trip trip = feed.getTrip(entry.getKey());
+
+			for(Transfer transfer : entry.getValue()) {
+				transfer.setFromTrip(trip);
+			}
+		}
+
+		for (Entry<String, List<Transfer>> entry : getById(3).entrySet()) {
+			Trip trip = feed.getTrip(entry.getKey());
+
+			for(Transfer transfer : entry.getValue()) {
+				transfer.setToTrip(trip);
 			}
 		}
 
