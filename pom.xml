@@ -147,6 +147,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <!-- Force alphabetical order to have a reproducible build -->
+                    <disableXmlReport>true</disableXmlReport>
+                    <runOrder>alphabetical</runOrder>
+                    <excludes>
+                        <exclude>**/*IntegrationTest</exclude>
+                    </excludes>
+                    <argLine>--illegal-access=permit
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED
+                        -Dillegal-access=permit</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.central</groupId>
@@ -257,6 +269,33 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <activation><activeByDefault>false</activeByDefault></activation>
+            <id>integration-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>none</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>**/*IntegrationTest</include>
+                                    </includes>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

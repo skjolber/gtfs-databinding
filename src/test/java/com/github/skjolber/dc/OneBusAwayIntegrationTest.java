@@ -40,7 +40,7 @@ import com.github.skjolber.dc.model.Service;
  *
  */
 
-public class ReferenceImplementationTest {
+public class OneBusAwayIntegrationTest {
 
 	private static File file = new File("./src/test/resources/rb_norway-aggregated-gtfs.zip");
 
