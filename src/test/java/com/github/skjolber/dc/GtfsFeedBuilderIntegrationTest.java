@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.junit.jupiter.api.Test;
 
-public class GtfsFeedBuilderTest {
+public class GtfsFeedBuilderIntegrationTest {
 
 	private static File file = new File("./src/test/resources/rb_norway-aggregated-gtfs.zip");
 
