@@ -24,8 +24,6 @@ public class Route {
 
     private int sortOrder = MISSING_VALUE;
 
-    private String brandingUrl;    
-
     /**
      * 0 = unknown / unspecified, 1 = bikes allowed, 2 = bikes NOT allowed
      */
@@ -119,13 +117,5 @@ public class Route {
 		this.sortOrder = sortOrder;
 	}
 
-	public String getBrandingUrl() {
-		return brandingUrl;
-	}
-
-	public void setBrandingUrl(String brandingUrl) {
-		this.brandingUrl = brandingUrl;
-	}
-	
 	
 }

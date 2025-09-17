@@ -1,5 +1,4 @@
 trip_id,stop_id,stop_sequence,arrival_time,departure_time,pickup_type,drop_off_type,shape_dist_traveled,stop_headsign
-RUT:ServiceJourney:1132-113061-11518274,NSR:Quay:8258,0,14:25:00,14:25:00,0,1,,
 RUT:ServiceJourney:1132-113061-11518274,NSR:Quay:8244,1,14:27:00,14:27:00,0,0,,
 RUT:ServiceJourney:1132-113061-11518274,NSR:Quay:8535,2,14:28:00,14:28:00,0,0,,
 RUT:ServiceJourney:1132-113061-11518274,NSR:Quay:8240,3,14:30:00,14:30:00,0,0,,

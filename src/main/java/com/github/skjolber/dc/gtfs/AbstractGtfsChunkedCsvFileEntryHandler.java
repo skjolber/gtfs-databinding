@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.github.skjolber.dc.gtfs.mt.ShapePointAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,7 @@ import com.github.skjolber.unzip.FileEntryStreamHandler;
 
 public abstract class AbstractGtfsChunkedCsvFileEntryHandler implements ChunkedFileEntryHandler {
 
-	private static Logger logger = LoggerFactory.getLogger(AbstractGtfsChunkedCsvFileEntryHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractGtfsChunkedCsvFileEntryHandler.class);
 	
 	protected static final int PARALLEL_BUFFER_SIZE = 16 * 1024 * 1024;
 	protected static final int PARALLEL_READ_BUFFER_SIZE = 16 * 1024;
@@ -46,13 +47,14 @@ public abstract class AbstractGtfsChunkedCsvFileEntryHandler implements ChunkedF
 	protected volatile boolean serviceCalendarDates = false;
 	protected volatile boolean serviceCalendar = false;
 	protected volatile boolean transfers = false;
-	
+	protected volatile boolean shapePoints = false;
+
 	protected volatile boolean setAgencyOnRoutes = false;
 	protected volatile boolean setRouteOnTrip = false;
 	protected volatile boolean setServiceOnTrip = false;
 	protected volatile boolean createCalendarServices = false;
 	protected volatile boolean createCalendarDatesServices = false;
-	protected volatile boolean setStopsOnTransfers = false;
+	protected volatile boolean setStopsAndTripsOnTransfers = false;
 
 	protected volatile boolean endFileCollectionForFeedInfo = false;
 	
@@ -63,11 +65,13 @@ public abstract class AbstractGtfsChunkedCsvFileEntryHandler implements ChunkedF
 	protected TripAdapter tripAdapter;
 	protected TransferAdapter transferAdapter = new TransferAdapter(feed);
 	protected Double stopColocationLimit;
-
+	protected ShapePointAdapter shapePointAdapter;
 
 	public AbstractGtfsChunkedCsvFileEntryHandler(int chunkLength, Double colocationLimit) {
 		this.stopAdapter = new StopAdapter(feed);
 		this.stopColocationLimit = colocationLimit;
+
+		this.shapePointAdapter = new ShapePointAdapter(chunkLength, feed);
 	}
 
 	public void setDefaultAgencyId(String defaultAgencyId) {
@@ -119,7 +123,8 @@ public abstract class AbstractGtfsChunkedCsvFileEntryHandler implements ChunkedF
 			case "feed_info.txt": onFeedInfoEntryProcessed(executor); break;
 			case "calendar_dates.txt": onCalendarDatesEntryProcessed(executor); break;
 			case "calendar.txt": onCalendarEntryProcessed(executor); break;			
-			case "transfers.txt": onTransfersEntryProcessed(executor); break;			
+			case "transfers.txt": onTransfersEntryProcessed(executor); break;
+			case "shapes.txt": onShapePointEntryProcessed(executor); break;
 		}
 		
 		// compete for lock to forward state
@@ -129,7 +134,9 @@ public abstract class AbstractGtfsChunkedCsvFileEntryHandler implements ChunkedF
             } finally {
                 lock.unlock();
             }
-        }
+        } else {
+			logger.info("Skipping post processing since it is already being performed by another thread");
+		}
 	}
 
 	private void onTransfersEntryProcessed(ThreadPoolExecutor executor) {
@@ -169,12 +176,16 @@ public abstract class AbstractGtfsChunkedCsvFileEntryHandler implements ChunkedF
 		this.trips = true;
 	}
 
+	protected void onShapePointEntryProcessed(ThreadPoolExecutor executor) {
+		// add to store and lookup cache
+		this.shapePoints = true;
+	}
+
 	protected void onRoutesEntryProcessed(ThreadPoolExecutor executor) {
 		// add to store and lookup cache
 		feed.addRoutes(routeAdapter.getRoutes());
 
 		this.routes = true;
-		
 	}
 
 	protected void onAgencyEntryProcessed(ThreadPoolExecutor executor) {

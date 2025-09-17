@@ -40,17 +40,12 @@ public class StopTime {
     
     private String stopHeadsign;
 
-    private String routeShortName;
-
     private int pickupType;
 
     private int dropOffType;
 
     private double shapeDistTraveled = MISSING_VALUE;
 
-    /** This is a Conveyal extension to the GTFS spec to support Seattle on/off peak fares. */
-    private String farePeriodId;	
-	
     public StopTime() {
     }
 
@@ -143,14 +138,6 @@ public class StopTime {
         this.stopHeadsign = headSign;
     }
 
-    public String getRouteShortName() {
-        return routeShortName;
-    }
-
-    public void setRouteShortName(String routeShortName) {
-        this.routeShortName = routeShortName;
-    }
-
     public int getPickupType() {
         return pickupType;
     }
@@ -181,14 +168,6 @@ public class StopTime {
 
     public void clearShapeDistTraveled() {
         this.shapeDistTraveled = MISSING_VALUE;
-    }
-
-    public String getFarePeriodId() {
-        return farePeriodId;
-    }
-
-    public void setFarePeriodId(String farePeriodId) {
-        this.farePeriodId = farePeriodId;
     }
 
     public StopTime getNext() {

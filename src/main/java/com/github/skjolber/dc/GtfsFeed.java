@@ -14,6 +14,7 @@ import com.github.skjolber.dc.model.Route;
 import com.github.skjolber.dc.model.Service;
 import com.github.skjolber.dc.model.ServiceCalendar;
 import com.github.skjolber.dc.model.ServiceCalendarDate;
+import com.github.skjolber.dc.model.ShapePoint;
 import com.github.skjolber.dc.model.Stop;
 import com.github.skjolber.dc.model.StopTime;
 import com.github.skjolber.dc.model.Transfer;
@@ -43,7 +44,8 @@ public class GtfsFeed {
 	protected List<Agency> agencies = new ArrayList<>(4096);
 	protected List<Route> routes = new ArrayList<>(4096);
 	protected List<Transfer> transfers = new ArrayList<>(4096);
-	
+	protected List<ShapePoint> shapePoints = new ArrayList<>(4096);
+
 	protected Map<String, LocalDate> dates = new ConcurrentHashMap<>(4096);
 	
 	protected List<ServiceCalendar> calendars = new ArrayList<>(4096);
@@ -200,7 +202,11 @@ public class GtfsFeed {
 			this.tripById.put(trip.getId(), trip);
 		}
 	}
-	
+
+	public void addShapePoints(List<ShapePoint> shapePoints) {
+		this.shapePoints.addAll(shapePoints);
+	}
+
 	public void addStops(List<Stop> stops) {
 		for(Stop stop: stops) {
 			this.stopById.put(stop.getId(), stop);
@@ -229,5 +235,9 @@ public class GtfsFeed {
 	
 	public List<Transfer> getTransfers() {
 		return transfers;
+	}
+
+	public List<ShapePoint> getShapePoints() {
+		return shapePoints;
 	}
 }

@@ -26,6 +26,8 @@ import com.github.skjolber.unzip.csv.AbstractSesselTjonnaCsvFileEntryChunkStream
 import com.github.skjolber.unzip.csv.AbstractSesselTjonnaCsvFileEntryStreamHandler;
 import com.github.skjolber.unzip.csv.CsvLineHandler;
 import com.github.skjolber.unzip.csv.CsvLineHandlerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * For chunked / multi-threaded parsing.
@@ -35,17 +37,26 @@ import com.github.skjolber.unzip.csv.CsvLineHandlerFactory;
 @SuppressWarnings("unchecked")
 public class StopTimeAdapter implements CsvLineHandlerFactory {
 
+	private static final Logger log = LoggerFactory.getLogger(StopTimeAdapter.class);
 	protected static CsvMapper2<StopTime, IntermediateProcessor<StopTime>> parser;
 
 	public static CsvMapper2<StopTime, IntermediateProcessor<StopTime>> getParser() {
 		return parser;
 	}
 	
-	private static int getStringAsSeconds(String string) { // 14:30:00
+	private static int getStringAsSeconds(String string) { // 1114:30:00
+		int length = string.length();
+		if(length == 8) {
+			return
+					(string.charAt(6) - '0') * 10 + (string.charAt(7) - '0') // seconds
+							+ (string.charAt(3) - '0') * 600 + (string.charAt(4) - '0') * 60 // minutes
+							+ (string.charAt(0) - '0') * 36000 + (string.charAt(1) - '0') * 3600 // hours
+					;
+		}
 		return 
-				(string.charAt(6) - '0') * 10 + (string.charAt(7) - '0') // seconds
-				+ (string.charAt(3) - '0') * 600 + (string.charAt(4) - '0') * 60 // minutes
-				+ (string.charAt(0) - '0') * 36000 + (string.charAt(1) - '0') * 3600 // hours
+				(string.charAt(length - 2) - '0') * 10 + (string.charAt(length - 1) - '0') // seconds
+				+ (string.charAt(length - 5) - '0') * 600 + (string.charAt(length - 4) - '0') * 60 // minutes
+				+ Integer.parseInt(string, 0, length - 6, 10) * 3600 // hours
 				;
 	}
 	
@@ -82,9 +93,6 @@ public class StopTimeAdapter implements CsvLineHandlerFactory {
 			.stringField("stop_headsign")
 				.setter(StopTime::setStopHeadsign)
 				.quotedWithoutLinebreaks()
-				.optional()
-			.stringField("fare_period_id")
-				.setter(StopTime::setFarePeriodId)
 				.optional()
 			.build();
 	}
@@ -173,6 +181,7 @@ public class StopTimeAdapter implements CsvLineHandlerFactory {
 	}
 	
 	public void resolveReferences() {
+		log.info("Resolve stop time references");
 		for (IntermediateProcessor<StopTime> p : processors.values()) {
 			for (Entry<String, List<StopTime>> entry : p.getById(1).entrySet()) {
 				Stop stop = feed.getStop(entry.getKey());
@@ -196,8 +205,12 @@ public class StopTimeAdapter implements CsvLineHandlerFactory {
 		
 		for (StopTimeHandler stopTimeHandler : handlers.values()) {
 			for (List<StopTime> list : stopTimeHandler.getStopTimes()) {
+				//log.info("Process " + list.size() + " stop times");
+
 				if(!list.isEmpty()) {
 					// handle inconsistencies in sequence numbering here
+
+
 					for(int i = 0; i < list.size() - 1; i++) {
 						if(list.get(i).getTrip() != list.get(i + 1).getTrip()) {
 							StopTime last = list.get(i);
@@ -214,10 +227,12 @@ public class StopTimeAdapter implements CsvLineHandlerFactory {
 							// TODO normalize sequence numbers too?
 						}
 					}
+
+
 					if(!list.isEmpty()) {
 						Trip trip = list.get(0).getTrip();
 						if(trip.getStopTimes() != null) {
-							throw new RuntimeException(trip.getId() + " was not empty");
+							throw new RuntimeException(trip.getId() + " already has " + trip.getStopTimes().size() + " stop times, wanted to set " + list.size());
 						}
 						trip.setStopTimes(list);
 					}

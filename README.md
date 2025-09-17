@@ -18,6 +18,7 @@ Supported GTFS files are
  * calendar_dates.txt
  * calendar.txt	
  * transfers.txt
+ * shapes.txt
 
 The project also servers as a complex use-case for the [sesseltjonna-csv](https://github.com/skjolber/sesseltjonna-csv) in combination with [unzip-csv](https://github.com/skjolber/unzip-csv) projects. Notable features:
 
@@ -36,7 +37,7 @@ Example dependency config:
 <dependency>
     <groupId>com.github.skjolber.gtfs-databinding</groupId>
     <artifactId>gtfs-databinding</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -53,16 +54,21 @@ The current implementation is tested against the [OneBusAway GTFS Reference] par
 ## Performance
 Taking advantage of both a dynamically generated CSV databinding and parallelization improves parse time about 4-5 times compared to the reference implementation (which, to be fair, is not the fastest out there).
 
-
 # Get involved
 If you have any questions, comments or improvement suggestions, please file an issue or submit a pull-request.
 
 Feel free to connect with me on [LinkedIn], see also my [Github page].
 
+## Add GTFS feeds
+GTFS feeds exceed the 100 MB limit on file size for github.
+
+[Download](https://storage.googleapis.com/marduk-production/outbound/gtfs/rb_norway-aggregated-gtfs.zip) and place in the test folder.
+
 ## License
 [Apache 2.0]
 
 # History
+ - 1.1.0: Bump dependencies, refresh gtfs files.
  - 1.0.2: Bump unzip / CSV library versions
  - 1.0.0: Initial version
 

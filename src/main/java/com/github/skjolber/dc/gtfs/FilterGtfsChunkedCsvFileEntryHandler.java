@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import com.github.skjolber.dc.gtfs.mt.ShapePointAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,7 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 		
 		this.tripAdapter = new FilterTripAdapter(chunkLength, feed);
 		this.stopTimeAdapter = new FilterStopTimeAdapter(chunkLength, feed);
-		
+
 		this.serviceCalendarAdapter = new FilterServiceCalendarAdapter(feed, startDate, endDate);
 		this.serviceCalendarDateAdapter = new FilterServiceCalendarDateAdapter(feed);
 	}
@@ -81,10 +82,11 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 		
 		this.stopTimes = true;
 	}
-
 	
 	protected boolean onPostProcessing() {
 		if(!createCalendarServices && serviceCalendar) {
+			logger.info("Post process service calendar");
+
 			createCalendarServices = true;
 			
 			serviceCalendarAdapter.resolveServices();
@@ -92,6 +94,8 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 			return true;
 		}
 		if(!createCalendarDatesServices && serviceCalendarDates) {
+			logger.info("Post process service calendar dates");
+
 			createCalendarDatesServices = true;
 			
 			serviceCalendarDateAdapter.resolveServices();
@@ -100,6 +104,8 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 		}
 		
 		if(!setRouteOnTrip && routes && trips) {
+			logger.info("Post process trips routes");
+
 			setRouteOnTrip = true;
 			
 			tripAdapter.resolveRoutes();
@@ -108,6 +114,8 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 		}
 		
 		if(!setServiceOnTrip && trips && createCalendarServices && createCalendarDatesServices) {
+			logger.info("Post process trips services");
+
 			setServiceOnTrip = true;
 			
 			tripAdapter.resolveServices();
@@ -117,8 +125,8 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 			return true;
 		}
 		
-		
 		if(!setAgencyOnRoutes && agency && routes) {
+			logger.info("Post process stop times");
 			routeAdapter.resolveReferences(feed);
 
 			setAgencyOnRoutes = true;
@@ -127,6 +135,8 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 		}
 
 		if(!setStopTimesOnStop && stopTimes && stops) {
+			logger.info("Post process stop times");
+
 			stopTimeAdapter.resolveReferences();
 			
 			setStopTimesOnStop = true;
@@ -135,6 +145,8 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 		}
 		
 		if(!setServiceOnTrip && trips && createCalendarServices) {
+			logger.info("Post process trips services");
+
 			List<Trip> resolveTrips = tripAdapter.resolveTrips();
 			for (Trip trip : resolveTrips) {
 				feed.addTrip(trip);
@@ -147,10 +159,12 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 			return true;
 		}
 		
-		if(!setStopsOnTransfers && transfers && stops) {
-			setStopsOnTransfers = true;
+		if(!setStopsAndTripsOnTransfers && transfers && stops && trips) {
+			logger.info("Post process transfers");
+
+			setStopsAndTripsOnTransfers = true;
 			
-			transferAdapter.resolveStops();
+			transferAdapter.resolveTranfers();
 			
 			return true;
 		}
@@ -159,7 +173,6 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 	}
 
 	protected void onCalendarEntryProcessed(ThreadPoolExecutor executor) {
-		
 		serviceCalendarAdapter.resolveServices();
 		
 		feed.getCalendars().addAll(serviceCalendarAdapter.getServiceCalendars());
@@ -168,7 +181,6 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 	}
 
 	protected void onCalendarDatesEntryProcessed(ThreadPoolExecutor executor) {
-		
 		serviceCalendarDateAdapter.resolveServices();
 		
 		// add to store
@@ -188,6 +200,7 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 			case "stop_times.txt": return stopTimeAdapter.getFileEntryStreamHandler(this, executor, size);
 			case "calendar.txt": return serviceCalendarAdapter.getFileEntryStreamHandler(this, executor, size);	
 			case "calendar_dates.txt": return serviceCalendarDateAdapter.getFileEntryStreamHandler(this, executor, size);
+			case "shapes.txt": return shapePointAdapter.getFileEntryStreamHandler(this, executor, size);
 		}
 
 		return super.getFileEntryStreamHandler(name, size, executor);
@@ -198,6 +211,7 @@ public class FilterGtfsChunkedCsvFileEntryHandler extends AbstractGtfsChunkedCsv
 		switch(name) {
 			case "trips.txt": return tripAdapter.getFileEntryChunkedStreamHandler();
 			case "stop_times.txt": return stopTimeAdapter.getFileEntryChunkedStreamHandler();
+			case "shapes.txt": return shapePointAdapter.getFileEntryChunkedStreamHandler();
 		}
 		return super.getFileEntryChunkedStreamHandler(name, size, executor);
 	}

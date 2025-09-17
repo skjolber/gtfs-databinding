@@ -9,11 +9,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.github.skjolber.dc.model.ShapePoint;
 import org.junit.jupiter.api.Test;
 import org.onebusaway.gtfs.impl.GtfsRelationalDaoImpl;
 import org.onebusaway.gtfs.model.Agency;
@@ -38,7 +42,7 @@ import com.github.skjolber.dc.model.Service;
 
 public class ReferenceImplementationTest {
 
-	private static File file = new File("./src/test/resources/rb_rut-aggregated-gtfs.zip");
+	private static File file = new File("./src/test/resources/rb_norway-aggregated-gtfs.zip");
 
 	@Test
 	public void compareImplementations() throws Exception {
@@ -52,8 +56,8 @@ public class ReferenceImplementationTest {
 		transfers:
 		for(Transfer t : allTransfers) {
 			for (com.github.skjolber.dc.model.Transfer transfer : transfers) {
-				if(transfer.getTo().getId().equals(t.getToStop().getId().getId())) {
-					if(transfer.getFrom().getId().equals(t.getFromStop().getId().getId())) {
+				if(transfer.getToStop().getId().equals(t.getToStop().getId().getId())) {
+					if(transfer.getFromStop().getId().equals(t.getFromStop().getId().getId())) {
 						
 						if(t.getTransferType() == transfer.getType()) {
 							continue transfers;
@@ -119,6 +123,38 @@ public class ReferenceImplementationTest {
 			oldServiceIds.add(agencyAndId.getId());
 		}
 
+		Collection<org.onebusaway.gtfs.model.ShapePoint> allShapePoints = referenceDao.getAllShapePoints();
+		List<ShapePoint> shapePoints = newDao.getShapePoints();
+		assertEquals(shapePoints.size(), allShapePoints.size());
+
+		Map<String, List<ShapePoint>> shapePointsMap = new HashMap<>();
+		for (ShapePoint shapePoint : shapePoints) {
+			assertNotNull(shapePoint.getShapeId());
+			List<ShapePoint> list = shapePointsMap.get(shapePoint.getShapeId());
+			if(list == null) {
+				list = new ArrayList<>();
+				shapePointsMap.put(shapePoint.getShapeId(), list);
+			}
+			list.add(shapePoint);
+		}
+
+		Set<String> checked = new HashSet<>();
+		for (org.onebusaway.gtfs.model.ShapePoint allShapePoint : allShapePoints) {
+			if(checked.contains(allShapePoint.getShapeId().getId())) {
+				continue;
+			}
+			checked.add(allShapePoint.getShapeId().getId());
+
+			List<org.onebusaway.gtfs.model.ShapePoint> referenceShapeIds = referenceDao.getShapePointsForShapeId(allShapePoint.getShapeId());
+
+			List<ShapePoint> shapePoints1 = shapePointsMap.get(allShapePoint.getShapeId().getId());
+			Collections.sort(shapePoints1);
+			assertNotNull("No shapes for " + allShapePoint.getShapeId().getId() + ", wanted " + referenceShapeIds.size(), shapePoints1);
+			for(int i = 0; i < shapePoints1.size(); i++) {
+				assertShapePointEquals(shapePoints1.get(i), referenceShapeIds.get(i));
+			}
+		}
+
 		for (Entry<String, Service> entry : newDao.getServices().entrySet()) {
 			oldServiceIds.remove(entry.getKey());
 		}
@@ -138,8 +174,16 @@ public class ReferenceImplementationTest {
 
 			fail(referenceServiceCalendarDate.toString());
 		}
+
 	}
-	
+
+	private void assertShapePointEquals(ShapePoint b, org.onebusaway.gtfs.model.ShapePoint a) {
+		assertEquals(b.getShapeId() + ':' + a.getShapeId().getId(), a.getShapeId().getId(), b.getShapeId());
+		assertEquals(b.getShapeId() + ':' + a.getSequence(), a.getSequence(), b.getSequence());
+		assertEquals(b.getShapeId() + ':' + b.getSequence(), a.getLat(), b.getLat(), 0);
+		assertEquals(b.getShapeId() + ':' + a.getLon(), a.getLon(), b.getLon(), 0);
+	}
+
 	private void assertStopEquals(Stop a, com.github.skjolber.dc.model.Stop b) {
 		assertEquals(a.getCode(), b.getCode());
 		assertEquals(a.getDesc(), b.getDesc());
@@ -173,11 +217,10 @@ public class ReferenceImplementationTest {
 	private void assertRouteEquals(Route a, com.github.skjolber.dc.model.Route b) {
 		assertEquals(a.getShortName(), b.getShortName());
 		assertEquals(a.getBikesAllowed(), b.getBikesAllowed());
-		assertEquals(a.getBrandingUrl(), b.getBrandingUrl());
 		if(a.getColor() == null) {
 			assertEquals("000000", getHex(b.getColor()));
 		} else {
-			assertEquals(a.getColor(), getHex(b.getColor()));
+			assertEquals(a.getColor().toLowerCase(), getHex(b.getColor()).toLowerCase());
 		}
 		assertEquals(a.getDesc(), b.getDesc());
 		assertEquals(a.getLongName(), b.getLongName());
@@ -185,7 +228,7 @@ public class ReferenceImplementationTest {
 		if(a.getColor() == null) {
 			assertEquals("000000", getHex(b.getTextColor()));
 		} else {
-			assertEquals(a.getTextColor(), getHex(b.getTextColor()));
+			assertEquals(a.getTextColor().toLowerCase(), getHex(b.getTextColor()).toLowerCase());
 		}
 		assertEquals(a.getType(), b.getType());
 		assertEquals(a.getUrl(), b.getUrl());
@@ -202,7 +245,6 @@ public class ReferenceImplementationTest {
 
 	private void assertAgencyEquals(Agency a, com.github.skjolber.dc.model.Agency b) {
 		assertEquals(a.getName(), b.getName());
-		assertEquals(a.getBrandingUrl(), b.getBrandingUrl());
 		assertEquals(a.getFareUrl(), b.getFareUrl());
 		assertEquals(a.getLang(), b.getLang());
 		assertEquals(a.getPhone(), b.getPhone());
@@ -211,16 +253,14 @@ public class ReferenceImplementationTest {
 	}
 
 	private void assertStopEquals(String message, StopTime a, com.github.skjolber.dc.model.StopTime b) {
-		assertEquals(message, a.getStopSequence(), b.getStopSequence());
-		assertEquals(message, a.getDepartureTime(), b.getDepartureTime());
-		assertEquals(message, a.getArrivalTime(), b.getArrivalTime());
-		assertEquals(message, a.getDropOffType(), b.getDropOffType());
-		assertEquals(message, a.getFarePeriodId(), b.getFarePeriodId());
-		assertEquals(message, a.getPickupType(), b.getPickupType());
-		assertEquals(message, a.getRouteShortName(), b.getRouteShortName());
-		assertEquals(message, a.getShapeDistTraveled(), b.getShapeDistTraveled(), 0.1);
-		assertEquals(message, a.getStopHeadsign(), b.getStopHeadsign());
-		assertEquals(message, a.getTimepoint(), b.getTimepoint());
+		assertEquals(message + ": stop sequence", a.getStopSequence(), b.getStopSequence());
+		assertEquals(message + ": departure time", a.getDepartureTime(), b.getDepartureTime());
+		assertEquals(message + ": arrival time", a.getArrivalTime(), b.getArrivalTime());
+		assertEquals(message + ": drop off time", a.getDropOffType(), b.getDropOffType());
+		assertEquals(message + ": pickup time", a.getPickupType(), b.getPickupType());
+		assertEquals(message + ": shape dist traveled", a.getShapeDistTraveled(), b.getShapeDistTraveled(), 0.1);
+		assertEquals(message + ": stop head sign", a.getStopHeadsign(), b.getStopHeadsign());
+		assertEquals(message + ": timepoint", a.getTimepoint(), b.getTimepoint());
 	}
 
 	private static boolean compare(ServiceCalendarDate oldServiceCalendarDate, com.github.skjolber.dc.model.ServiceCalendarDate newServiceCalendarDate) {

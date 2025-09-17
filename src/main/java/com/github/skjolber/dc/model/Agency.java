@@ -16,8 +16,6 @@ public class Agency {
 
     private String fareUrl;
 
-    private String brandingUrl;
-    
     private String email;
     
     public void setId(String id) {
@@ -74,14 +72,6 @@ public class Agency {
 
 	public void setFareUrl(String fareUrl) {
 		this.fareUrl = fareUrl;
-	}
-
-	public String getBrandingUrl() {
-		return brandingUrl;
-	}
-
-	public void setBrandingUrl(String brandingUrl) {
-		this.brandingUrl = brandingUrl;
 	}
 
 	public String getEmail() {
