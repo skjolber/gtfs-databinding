@@ -214,7 +214,23 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>            
+			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>exec</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>./transfer.sh</executable>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
