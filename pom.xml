@@ -21,7 +21,7 @@
         <junit.version>5.13.4</junit.version>
         
         <!-- add -DignoreSnapshots=true when releasing to work around this being a snapshot version -->
-        <onebusaway-gtfs.version>10.0.1</onebusaway-gtfs.version>
+        <onebusaway-gtfs.version>10.1.0</onebusaway-gtfs.version>
         
         <!-- plugins -->
         <build-helper-maven-plugin.version>1.9.1</build-helper-maven-plugin.version>
